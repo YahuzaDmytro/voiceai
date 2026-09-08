@@ -14,13 +14,15 @@ class CallsTable
     {
         return $table
             ->columns([
-                TextColumn::make('lead.id')
+                TextColumn::make('application.phone')
+                    ->label('Application')
                     ->searchable(),
                 TextColumn::make('provider')
                     ->searchable(),
                 TextColumn::make('external_id')
                     ->searchable(),
                 TextColumn::make('status')
+                    ->badge()
                     ->searchable(),
                 TextColumn::make('started_at')
                     ->dateTime()
@@ -35,14 +37,8 @@ class CallsTable
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->recordActions([
                 EditAction::make(),
             ])

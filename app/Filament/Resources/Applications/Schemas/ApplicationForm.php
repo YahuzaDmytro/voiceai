@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Filament\Resources\Leads\Schemas;
+namespace App\Filament\Resources\Applications\Schemas;
 
-use App\Enums\LeadStatus;
-use App\Models\Lead;
+use App\Enums\ApplicationStatus;
+use App\Models\Application;
 use App\Services\ConversationService;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
-class LeadForm
+class ApplicationForm
 {
     public static function configure(Schema $schema): Schema
     {
@@ -22,12 +22,11 @@ class LeadForm
                 TextInput::make('first_name'),
                 TextInput::make('last_name'),
                 Select::make('status')
-                    ->options(LeadStatus::class)
-                    ->required(),
-                Textarea::make('needs')
+                    ->options(ApplicationStatus::class)
+                    ->required()
+                    ->default(ApplicationStatus::New),
+                Textarea::make('summary')
                     ->rows(3)
-                    ->columnSpanFull(),
-                TextInput::make('next_step')
                     ->columnSpanFull(),
                 Textarea::make('conversation_log')
                     ->label('AI conversation')
@@ -35,12 +34,12 @@ class LeadForm
                     ->dehydrated(false)
                     ->rows(12)
                     ->columnSpanFull()
-                    ->afterStateHydrated(function (Textarea $component, ?Lead $record): void {
-                        if ($record?->application === null) {
+                    ->afterStateHydrated(function (Textarea $component, ?Application $record): void {
+                        if ($record === null) {
                             return;
                         }
 
-                        $component->state(app(ConversationService::class)->transcriptText($record->application) ?: 'No messages yet.');
+                        $component->state(app(ConversationService::class)->transcriptText($record) ?: 'No messages yet.');
                     }),
             ]);
     }

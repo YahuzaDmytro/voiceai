@@ -24,8 +24,8 @@ services:
         ports:
             - 22233:5432
     redis:
-        image: redis:4-alpine
-        container_name: winshark-redis
+        image: redis:7-alpine
+        container_name: voiceai-redis
         restart: unless-stopped
         ports:
             - 27379:6379

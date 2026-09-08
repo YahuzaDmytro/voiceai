@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Leads;
 
-use App\Filament\Resources\Leads\Pages\CreateLead;
 use App\Filament\Resources\Leads\Pages\EditLead;
 use App\Filament\Resources\Leads\Pages\ListLeads;
 use App\Filament\Resources\Leads\Schemas\LeadForm;
@@ -18,9 +17,13 @@ class LeadResource extends Resource
 {
     protected static ?string $model = Lead::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUser;
 
     protected static ?string $recordTitleAttribute = 'phone';
+
+    protected static ?string $navigationLabel = 'Leads';
+
+    protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
     {
@@ -34,17 +37,19 @@ class LeadResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
     {
         return [
             'index' => ListLeads::route('/'),
-            'create' => CreateLead::route('/create'),
-            'edit' => EditLead::route('/{record}/edit'),
+            'edit'  => EditLead::route('/{record}/edit'),
         ];
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
     }
 }

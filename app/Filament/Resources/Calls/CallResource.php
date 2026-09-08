@@ -18,9 +18,13 @@ class CallResource extends Resource
 {
     protected static ?string $model = Call::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhone;
 
-    protected static ?string $recordTitleAttribute = 'lead_id';
+    protected static ?string $recordTitleAttribute = 'id';
+
+    protected static ?string $navigationLabel = 'Calls';
+
+    protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
     {
@@ -34,17 +38,15 @@ class CallResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListCalls::route('/'),
+            'index'  => ListCalls::route('/'),
             'create' => CreateCall::route('/create'),
-            'edit' => EditCall::route('/{record}/edit'),
+            'edit'   => EditCall::route('/{record}/edit'),
         ];
     }
 }

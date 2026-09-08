@@ -19,6 +19,7 @@
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>
+        <env name="APP_KEY" value="base64:2fl+Ktvkfl+Fuz4Qp/Ej30lCtzptdOGe4gsu/DkdUjg="/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
@@ -31,6 +32,10 @@
         <env name="SESSION_DRIVER" value="array"/>
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
-        <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <env name="LEAD_CALLER_API_KEY" value="testkey"/>
+        <env name="LIVEKIT_HOST" value="https://livekit.test"/>
+        <env name="LIVEKIT_API_KEY" value="devkey"/>
+        <env name="LIVEKIT_API_SECRET" value="devsecret-must-be-at-least-32-bytes-long"/>
+        <env name="LIVEKIT_SIP_TRUNK_ID" value="ST_test"/>
     </php>
 </phpunit>

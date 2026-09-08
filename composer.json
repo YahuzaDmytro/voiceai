@@ -51,6 +51,10 @@
             "Composer\\Config::disableProcessTimeout",
             "@php artisan dev"
         ],
+        "horizon": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php artisan horizon"
+        ],
         "test": [
             "@php artisan config:clear --ansi @no_additional_args",
             "@php artisan test"

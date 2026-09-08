@@ -4,8 +4,8 @@ namespace App\Filament\Resources\Calls\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
 class CallForm
@@ -14,8 +14,8 @@ class CallForm
     {
         return $schema
             ->components([
-                Select::make('lead_id')
-                    ->relationship('lead', 'id')
+                Select::make('application_id')
+                    ->relationship('application', 'phone')
                     ->required(),
                 TextInput::make('provider'),
                 TextInput::make('external_id'),

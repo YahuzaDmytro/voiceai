@@ -2,51 +2,44 @@
 
 namespace App\Services;
 
+use App\Enums\ApplicationStatus;
+use App\Models\Application;
 use App\Models\Call;
-use App\Models\Lead;
-use Firebase\JWT\JWT;
+use App\Services\LiveKit\AccessToken;
+use App\Services\LiveKit\Host;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class CallService
 {
-    public function create(Lead $lead): Call
+    public function __construct(
+        private readonly AccessToken $tokens,
+        private readonly Host $host,
+    ) {
+    }
+
+    public function create(Application $application): Call
     {
-        return $lead->calls()->create([
+        $call = $application->calls()->create([
             'provider' => 'livekit',
             'status'   => 'pending',
         ]);
+
+        $this->dial($call);
+
+        return $call->refresh();
     }
 
-    protected function generateToken(string $roomName): string
-    {
-        $payload = [
-            'iss'   => config('livekit.key'),
-            'sub'   => 'laravel-backend',
-            'iat'   => now()->timestamp,
-            'nbf'   => now()->timestamp,
-            'exp'   => now()->addSeconds(config('livekit.token_ttl'))->timestamp,
-            'video' => [
-                'roomAdmin' => true,
-                'room'      => $roomName,
-            ],
-        ];
-
-        return JWT::encode($payload, config('livekit.secret'), 'HS256');
-    }
-
-    protected function dial(Call $call): void
+    public function dial(Call $call): void
     {
         $roomName = "call-{$call->id}";
-        $token    = $this->generateToken($roomName);
-
-        $response = Http::withToken($token)
-            ->post(config('livekit.host') . '/twirp/livekit.SIP/CreateSIPParticipant', [
+        $response = Http::withToken($this->tokens->forDial($roomName))
+            ->post($this->host->twirp('twirp/livekit.SIP/CreateSIPParticipant'), [
                 'sip_trunk_id'         => config('livekit.sip_trunk_id'),
-                'sip_call_to'          => $call->lead->phone,
+                'sip_call_to'          => $call->application->phone,
                 'room_name'            => $roomName,
-                'participant_identity' => "lead-{$call->lead_id}",
-                'wait_until_answered'  => false,
+                'participant_identity' => "application-{$call->application_id}",
+                'wait_until_answered'  => true,
             ]);
 
         if ($response->failed()) {
@@ -62,6 +55,10 @@ class CallService
             'external_id' => $response->json('sip_call_id') ?? $response->json('participant_id'),
             'started_at'  => now(),
             'metadata'    => $response->json() ?? ['error' => $response->body()],
+        ]);
+
+        $call->application->update([
+            'status' => $call->status === 'dialing' ? ApplicationStatus::Calling : ApplicationStatus::Failed,
         ]);
     }
 }
